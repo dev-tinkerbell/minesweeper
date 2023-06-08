@@ -3,18 +3,23 @@ import Table from './Table';
 import Form from './Form';
 
 // code state
+// export const CODE = {
+//     MINE: -7, // 지뢰
+//     NORMAL: -1, // 일반
+//     QUESTION: -2, // 물음표
+//     FLAG: -3, // 깃발
+//     QUESTION_MINE: -4, // 물음표지만 안에 지뢰일 경우
+//     FLAG_MINE: -5, // 깃발이지만 안에 지뢰일 경우
+//     CLICKED_MINE: -6, // 클릭했는데 지뢰일 경우
+//     OPENED: 0, // 열림
+// };
+
 export const CODE = {
-    MINE: -7, // 지뢰
-    NORMAL: -1, // 일반
-    QUESTION: -2, // 물음표
-    FLAG: -3, // 깃발
-    QUESTION_MINE: -4, // 물음표지만 안에 지뢰일 경우
-    FLAG_MINE: -5, // 깃발이지만 안에 지뢰일 경우
-    CLICKED_MINE: -6, // 클릭했는데 지뢰일 경우
-    OPENED: 0, // 열림
+    MINE: -1, // 지뢰
+    NORMAL: 0, // 일반
 };
 
-const TableContext = createContext({
+export const TableContext = createContext({
     tableData: [],
     dispatch: () => {},
 });
@@ -25,36 +30,71 @@ const initialState = {
 
 // 지뢰 심기
 const plantMine = (row, cell, mine) => {
-    const candidate = Array(row * cell)
-        .fill()
-        .map((arr, i) => i);
-    const shuffle = [];
-
-    while (candidate.length > row * cell - mine) {
-        const chosen = candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0];
-        shuffle.push(chosen);
-    }
-
+    // 2차원 배열로 table에 data 생성
     const data = [];
-    // 테이블 기본 세팅
+
     for (let i = 0; i < row; i++) {
-        const rowData = [];
-        data.push(rowData);
-
+        const cells = [];
         for (let j = 0; j < cell; j++) {
-            rowData.push(CODE.NORMAL);
+            cells.push(0);
         }
+        data.push(cells);
     }
 
-    // 테이블에 지뢰 심기
-    for (let k = 0; k < shuffle.length; k++) {
-        const ver = Math.floor(shuffle[k] / cell);
-        const hor = shuffle[k] % cell;
-        data[ver][hor] = CODE.MINE;
-    }
+    // row * cell 에서 mine 개수만큼 n 번째 array 추출
+    const array = new Array(row * cell).fill().map((_, i) => i);
+    const shuffle = [...array].sort(() => Math.random() - 0.5);
+    const minePosition = shuffle.splice(0, mine);
+
+    // n번째에 지뢰는 -1로 심기
+    minePosition.forEach((ver, index) => {
+        const rowIndex = Math.floor(ver / cell);
+        const cellIndex = ver % cell;
+        data[rowIndex][cellIndex] = -1;
+
+        if (data[rowIndex - 1]) {
+            // 좌 상
+            if (data[rowIndex - 1][cellIndex - 1] >= 0 && data[rowIndex - 1][cellIndex - 1] !== -1) {
+                data[rowIndex - 1][cellIndex - 1] += 1;
+            }
+            // 상
+            if (data[rowIndex - 1][cellIndex] !== -1) {
+                data[rowIndex - 1][cellIndex] += 1;
+            }
+            //  우 상
+            if (data[rowIndex - 1][cellIndex + 1] >= 0 && data[rowIndex - 1][cellIndex + 1] !== -1) {
+                data[rowIndex - 1][cellIndex + 1] += 1;
+            }
+        }
+
+        if (data[rowIndex + 1]) {
+            // 좌 하
+            if (data[rowIndex + 1][cellIndex - 1] >= 0 && data[rowIndex + 1][cellIndex - 1] !== -1) {
+                data[rowIndex + 1][cellIndex - 1] += 1;
+            }
+            // 하
+            if (data[rowIndex + 1][cellIndex] !== -1) {
+                data[rowIndex + 1][cellIndex] += 1;
+            }
+            //  우 하
+            if (data[rowIndex + 1][cellIndex + 1] >= 0 && data[rowIndex + 1][cellIndex + 1] !== -1) {
+                data[rowIndex + 1][cellIndex + 1] += 1;
+            }
+        }
+
+        // 좌
+        if (data[rowIndex][cellIndex - 1] >= 0 && data[rowIndex][cellIndex - 1] !== -1) {
+            data[rowIndex][cellIndex - 1] += 1;
+        }
+
+        // 우
+        if (data[rowIndex][cellIndex + 1] >= 0 && data[rowIndex][cellIndex + 1] !== -1) {
+            data[rowIndex][cellIndex + 1] += 1;
+        }
+    });
+
+    return data;
 };
-
-plantMine(5, 5, 9);
 
 // action create
 export const STATE_GAME = 'START_GAME';

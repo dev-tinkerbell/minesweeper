@@ -3,10 +3,19 @@
 }
 
 table {
+    margin-top: 30px;
     border-collapse: collapse;
 }
 
 td {
     border: 1px solid #ddd;
+    text-align: center;
+    width: 30px;
+    height: 30px;
     padding: 20px;
+    /* background-color: #000; */
+}
+
+td.mine {
+    background-color: #ddd;
 }
