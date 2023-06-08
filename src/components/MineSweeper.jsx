@@ -36,7 +36,7 @@ const plantMine = (row, cell, mine) => {
     for (let i = 0; i < row; i++) {
         const cells = [];
         for (let j = 0; j < cell; j++) {
-            cells.push(0);
+            cells.push({ info: 0, isOpened: false });
         }
         data.push(cells);
     }
@@ -50,46 +50,46 @@ const plantMine = (row, cell, mine) => {
     minePosition.forEach((ver, index) => {
         const rowIndex = Math.floor(ver / cell);
         const cellIndex = ver % cell;
-        data[rowIndex][cellIndex] = -1;
+        data[rowIndex][cellIndex].info = -1;
 
-        if (data[rowIndex - 1]) {
+        if (data[rowIndex - 1] !== undefined) {
             // 좌 상
-            if (data[rowIndex - 1][cellIndex - 1] >= 0 && data[rowIndex - 1][cellIndex - 1] !== -1) {
-                data[rowIndex - 1][cellIndex - 1] += 1;
+            if (data[rowIndex - 1][cellIndex - 1] !== undefined && data[rowIndex - 1][cellIndex - 1].info !== -1) {
+                data[rowIndex - 1][cellIndex - 1].info += 1;
             }
             // 상
-            if (data[rowIndex - 1][cellIndex] !== -1) {
-                data[rowIndex - 1][cellIndex] += 1;
+            if (data[rowIndex - 1][cellIndex].info !== -1) {
+                data[rowIndex - 1][cellIndex].info += 1;
             }
             //  우 상
-            if (data[rowIndex - 1][cellIndex + 1] >= 0 && data[rowIndex - 1][cellIndex + 1] !== -1) {
-                data[rowIndex - 1][cellIndex + 1] += 1;
+            if (data[rowIndex - 1][cellIndex + 1] !== undefined && data[rowIndex - 1][cellIndex + 1].info !== -1) {
+                data[rowIndex - 1][cellIndex + 1].info += 1;
             }
         }
 
-        if (data[rowIndex + 1]) {
+        if (data[rowIndex + 1] !== undefined) {
             // 좌 하
-            if (data[rowIndex + 1][cellIndex - 1] >= 0 && data[rowIndex + 1][cellIndex - 1] !== -1) {
-                data[rowIndex + 1][cellIndex - 1] += 1;
+            if (data[rowIndex + 1][cellIndex - 1] !== undefined && data[rowIndex + 1][cellIndex - 1].info !== -1) {
+                data[rowIndex + 1][cellIndex - 1].info += 1;
             }
             // 하
-            if (data[rowIndex + 1][cellIndex] !== -1) {
-                data[rowIndex + 1][cellIndex] += 1;
+            if (data[rowIndex + 1][cellIndex].info !== -1) {
+                data[rowIndex + 1][cellIndex].info += 1;
             }
             //  우 하
-            if (data[rowIndex + 1][cellIndex + 1] >= 0 && data[rowIndex + 1][cellIndex + 1] !== -1) {
-                data[rowIndex + 1][cellIndex + 1] += 1;
+            if (data[rowIndex + 1][cellIndex + 1] !== undefined && data[rowIndex + 1][cellIndex + 1].info !== -1) {
+                data[rowIndex + 1][cellIndex + 1].info += 1;
             }
         }
 
         // 좌
-        if (data[rowIndex][cellIndex - 1] >= 0 && data[rowIndex][cellIndex - 1] !== -1) {
-            data[rowIndex][cellIndex - 1] += 1;
+        if (data[rowIndex][cellIndex - 1] !== undefined && data[rowIndex][cellIndex - 1].info !== -1) {
+            data[rowIndex][cellIndex - 1].info += 1;
         }
 
         // 우
-        if (data[rowIndex][cellIndex + 1] >= 0 && data[rowIndex][cellIndex + 1] !== -1) {
-            data[rowIndex][cellIndex + 1] += 1;
+        if (data[rowIndex][cellIndex + 1] !== undefined && data[rowIndex][cellIndex + 1].info !== -1) {
+            data[rowIndex][cellIndex + 1].info += 1;
         }
     });
 
@@ -98,6 +98,7 @@ const plantMine = (row, cell, mine) => {
 
 // action create
 export const STATE_GAME = 'START_GAME';
+export const OPEN_CELL = 'OPEN_CELL';
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -105,6 +106,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 tableData: plantMine(action.row, action.cell, action.mine),
+            };
+        case OPEN_CELL:
+            return {
+                ...state,
+                tableData: action.newTableData,
             };
         default:
             return state;
