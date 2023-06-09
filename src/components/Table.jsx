@@ -5,18 +5,52 @@ const Table = () => {
     const { tableData } = useContext(TableContext);
     const { dispatch } = useContext(TableContext);
 
-    const cellClickHandler = (cellItem, rowIndex, cellIndex) => {
+    const newTableData = [...tableData];
+
+    const openCell = (rowIndex, cellIndex, previousCell) => {
+        const cellItem = newTableData[rowIndex] && newTableData[rowIndex][cellIndex];
+
+        // 현재 셀이 undefined라면 리턴
+        if (cellItem === undefined) return;
+        // 현재 셀이 open이라면 리턴
+        if (cellItem.isOpen) return;
+        // 현재 셀이 지뢰면 리턴
+        if (cellItem.info === -1) return;
+        // 이전 셀이 0보다 크다면 리턴
+        if (previousCell.info > 0) return;
+
+        cellItem.isOpen = true;
+        checkAroundCell(rowIndex, cellIndex, cellItem);
+    };
+
+    const checkAroundCell = (rowIndex, cellIndex, cellItem) => {
+        // 좌 상
+        openCell(rowIndex - 1, cellIndex - 1, cellItem);
+        // 상
+        openCell(rowIndex - 1, cellIndex, cellItem);
+        // 우 상
+        openCell(rowIndex - 1, cellIndex + 1, cellItem);
+        // 좌
+        openCell(rowIndex, cellIndex + 1, cellItem);
+        // 우
+        openCell(rowIndex, cellIndex - 1, cellItem);
+        // 좌 하
+        openCell(rowIndex + 1, cellIndex - 1, cellItem);
+        // 하
+        openCell(rowIndex + 1, cellIndex, cellItem);
+        // 우 하
+        openCell(rowIndex + 1, cellIndex + 1, cellItem);
+    };
+
+    const cellClickHandler = (rowIndex, cellIndex, cellItem) => {
         if (cellItem.isOpen) return;
 
-        const newTableData = [...tableData];
+        cellItem.isOpen = true;
 
-        switch (cellItem.info) {
-            case -1:
-                alert('펑');
-            default:
-                newTableData[rowIndex][cellIndex].isOpen = true;
-                dispatch({ type: OPEN_CELL, newTableData });
-        }
+        if (cellItem.info === -1) alert('펑');
+        if (cellItem.info === 0) checkAroundCell(rowIndex, cellIndex, cellItem);
+
+        dispatch({ type: OPEN_CELL, newTableData });
     };
 
     return (
@@ -29,10 +63,11 @@ const Table = () => {
                                 <td
                                     key={cellIndex}
                                     className={cellItem.isOpen ? 'open' : ''}
-                                    onClick={() => cellClickHandler(cellItem, rowIndex, cellIndex)}
+                                    onClick={() => cellClickHandler(rowIndex, cellIndex, cellItem)}
                                 >
-                                    {cellItem.info !== 0 && cellItem.info}
-                                    {/* {cellItem.isOpen && cellItem.info !== 0 && cellItem.info} */}
+                                    {/* {cellItem.info > 0 && cellItem.info} */}
+                                    {cellItem.info === -1 && '💣'}
+                                    {cellItem.isOpen && cellItem.info !== 0 && cellItem.info}
                                 </td>
                             ))}
                         </tr>

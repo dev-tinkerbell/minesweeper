@@ -47,7 +47,7 @@ const plantMine = (row, cell, mine) => {
     const minePosition = shuffle.splice(0, mine);
 
     // n번째에 지뢰는 -1로 심기
-    minePosition.forEach((ver, index) => {
+    minePosition.forEach((ver) => {
         const rowIndex = Math.floor(ver / cell);
         const cellIndex = ver % cell;
         data[rowIndex][cellIndex].info = -1;
@@ -95,6 +95,9 @@ const plantMine = (row, cell, mine) => {
 
     return data;
 };
+
+// 지뢰가 아닌 cell 개수 체크
+const checkNotMineCell = (row, cell) => {};
 
 // action create
 export const STATE_GAME = 'START_GAME';
