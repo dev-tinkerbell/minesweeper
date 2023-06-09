@@ -60,6 +60,16 @@ CODE = {
             1. 조건에 일치한다면 checkAroundCell 호출한다.
 
 5.  지뢰가 아닌 cell 을 모두 오픈하면 게임 승리
+6.  우클릭 시
+
+    조건
+
+    -   opened면 우클릭 X
+
+    1.  클릭한 cell flag true 변환 후 newTable dispatch
+    2.  flag 표시
+    3.  좌클릭 X
+    4.  우클릭 두번한다면 원래 상태로 돌아오기
 
 ## 참고 코드
 

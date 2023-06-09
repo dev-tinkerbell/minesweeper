@@ -17,13 +17,14 @@ import Form from './Form';
 export const CODE = {
     MINE: -1, // 지뢰
     NORMAL: 0, // 일반
+    FLAG: -2, // 깃발
 };
 
 export const TableContext = createContext({
     isStart: false,
     tableData: [],
     notMineCell: 0,
-    openedCell: 0,
+    openedOriginCellCount: 0,
     dispatch: () => {},
 });
 
@@ -31,7 +32,7 @@ const initialState = {
     isStart: false,
     tableData: [],
     notMineCell: 0,
-    openedCell: 0,
+    openedOriginCellCount: 0,
 };
 
 // 지뢰 심기
@@ -42,7 +43,7 @@ const plantMine = (row, cell, mine) => {
     for (let i = 0; i < row; i++) {
         const cells = [];
         for (let j = 0; j < cell; j++) {
-            cells.push({ info: 0, isOpened: false });
+            cells.push({ info: 0, isOpened: false, isFlag: false });
         }
         data.push(cells);
     }
@@ -103,8 +104,8 @@ const plantMine = (row, cell, mine) => {
 };
 
 // 지뢰가 아닌 cell 개수 체크
-const checkOpenedCell = (notMineCell, openedCell) => {
-    if (notMineCell !== openedCell) return true;
+const checkOpenedCellCount = (notMineCell, openedCellCount) => {
+    if (notMineCell !== openedCellCount) return true;
 
     alert('승리 🎉');
     return false;
@@ -113,6 +114,7 @@ const checkOpenedCell = (notMineCell, openedCell) => {
 // action create
 export const STATE_GAME = 'START_GAME';
 export const OPEN_CELL = 'OPEN_CELL';
+export const CHANGE_FLAG = 'CHANGE_FLAG';
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -122,12 +124,17 @@ const reducer = (state, action) => {
                 isStart: true,
                 tableData: plantMine(action.row, action.cell, action.mine),
                 notMineCell: action.row * action.cell - action.mine,
-                openedCell: 0,
+                openedOriginCellCount: 0,
             };
         case OPEN_CELL:
             return {
                 ...state,
-                isStart: checkOpenedCell(state.notMineCell, action.openedCell),
+                isStart: checkOpenedCellCount(state.notMineCell, action.openedCellCount),
+                tableData: action.newTableData,
+            };
+        case CHANGE_FLAG:
+            return {
+                ...state,
                 tableData: action.newTableData,
             };
         default:
@@ -143,7 +150,7 @@ const MineSweeper = () => {
             isStart: state.isStart,
             tableData: state.tableData,
             notMineCell: state.notMineCell,
-            openedCell: state.openedCell,
+            openedOriginCellCount: state.openedOriginCellCount,
             dispatch,
         }),
         [state.tableData]
