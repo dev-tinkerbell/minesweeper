@@ -20,12 +20,18 @@ export const CODE = {
 };
 
 export const TableContext = createContext({
+    isStart: false,
     tableData: [],
+    notMineCell: 0,
+    openedCell: 0,
     dispatch: () => {},
 });
 
 const initialState = {
+    isStart: false,
     tableData: [],
+    notMineCell: 0,
+    openedCell: 0,
 };
 
 // 지뢰 심기
@@ -97,7 +103,12 @@ const plantMine = (row, cell, mine) => {
 };
 
 // 지뢰가 아닌 cell 개수 체크
-const checkNotMineCell = (row, cell) => {};
+const checkOpenedCell = (notMineCell, openedCell) => {
+    if (notMineCell !== openedCell) return true;
+
+    alert('승리 🎉');
+    return false;
+};
 
 // action create
 export const STATE_GAME = 'START_GAME';
@@ -108,11 +119,15 @@ const reducer = (state, action) => {
         case STATE_GAME:
             return {
                 ...state,
+                isStart: true,
                 tableData: plantMine(action.row, action.cell, action.mine),
+                notMineCell: action.row * action.cell - action.mine,
+                openedCell: 0,
             };
         case OPEN_CELL:
             return {
                 ...state,
+                isStart: checkOpenedCell(state.notMineCell, action.openedCell),
                 tableData: action.newTableData,
             };
         default:
@@ -123,7 +138,16 @@ const reducer = (state, action) => {
 const MineSweeper = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const value = useMemo(() => ({ tableData: state.tableData, dispatch }), [state.tableData]);
+    const value = useMemo(
+        () => ({
+            isStart: state.isStart,
+            tableData: state.tableData,
+            notMineCell: state.notMineCell,
+            openedCell: state.openedCell,
+            dispatch,
+        }),
+        [state.tableData]
+    );
 
     return (
         <TableContext.Provider value={value}>

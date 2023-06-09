@@ -1,11 +1,17 @@
-import { useContext } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
+// import { useEffect, useState, memo, useMemo, useTransition, useCallback } from 'react';
 import { TableContext, OPEN_CELL } from './MineSweeper';
 
 const Table = () => {
-    const { tableData } = useContext(TableContext);
-    const { dispatch } = useContext(TableContext);
-
+    const { isStart, tableData, dispatch } = useContext(TableContext);
     const newTableData = [...tableData];
+    const openedCell = useRef(0);
+
+    useEffect(() => {
+        if (!isStart) {
+            openedCell.current = 0;
+        }
+    }, [isStart]);
 
     const openCell = (rowIndex, cellIndex, previousCell) => {
         const cellItem = newTableData[rowIndex] && newTableData[rowIndex][cellIndex];
@@ -20,6 +26,8 @@ const Table = () => {
         if (previousCell.info > 0) return;
 
         cellItem.isOpen = true;
+        openedCell.current += 1;
+
         checkAroundCell(rowIndex, cellIndex, cellItem);
     };
 
@@ -46,11 +54,12 @@ const Table = () => {
         if (cellItem.isOpen) return;
 
         cellItem.isOpen = true;
+        openedCell.current += 1;
 
-        if (cellItem.info === -1) alert('펑');
+        if (cellItem.info === -1) alert('실패 😂');
         if (cellItem.info === 0) checkAroundCell(rowIndex, cellIndex, cellItem);
 
-        dispatch({ type: OPEN_CELL, newTableData });
+        dispatch({ type: OPEN_CELL, newTableData, openedCell: openedCell.current });
     };
 
     return (
