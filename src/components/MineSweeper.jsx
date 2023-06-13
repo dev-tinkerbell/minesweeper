@@ -105,6 +105,7 @@ const plantMine = (row, cell, mine) => {
 
 // 지뢰가 아닌 cell 개수 체크
 const checkOpenedCellCount = (notMineCell, openedCellCount) => {
+    // console.log(notMineCell, openedCellCount);
     if (notMineCell !== openedCellCount) return true;
 
     alert('승리 🎉');
@@ -130,6 +131,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 isStart: checkOpenedCellCount(state.notMineCell, action.openedCellCount),
+                openedOriginCellCount: action.openedCellCount,
                 tableData: action.newTableData,
             };
         case CHANGE_FLAG:

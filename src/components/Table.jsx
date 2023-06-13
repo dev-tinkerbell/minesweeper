@@ -3,15 +3,15 @@ import { useContext, useState, useRef, useEffect } from 'react';
 import { TableContext, OPEN_CELL, CHANGE_FLAG } from './MineSweeper';
 
 const Table = () => {
-    const { isStart, tableData, dispatch, openedOriginCellCount } = useContext(TableContext);
+    const { tableData, dispatch, openedOriginCellCount } = useContext(TableContext);
     const newTableData = [...tableData];
     const openedCellCount = useRef(openedOriginCellCount);
 
     useEffect(() => {
-        if (!isStart) {
+        if (openedOriginCellCount === 0) {
             openedCellCount.current = 0;
         }
-    }, [isStart]);
+    }, [openedOriginCellCount]);
 
     const openCell = (rowIndex, cellIndex, previousCell) => {
         const cellItem = newTableData[rowIndex] && newTableData[rowIndex][cellIndex];

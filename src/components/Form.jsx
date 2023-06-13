@@ -4,7 +4,7 @@ import { TableContext, STATE_GAME } from './MineSweeper';
 const Form = () => {
     const [row, setRow] = useState(5);
     const [cell, setCell] = useState(5);
-    const [mine, setMine] = useState(2);
+    const [mine, setMine] = useState(3);
     const { dispatch } = useContext(TableContext);
 
     const onChangeRow = useCallback((e) => {
