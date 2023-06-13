@@ -24,7 +24,7 @@ export const TableContext = createContext({
     isStart: false,
     tableData: [],
     notMineCell: 0,
-    openedOriginCellCount: 0,
+    openedGlobalCellCount: 0,
     dispatch: () => {},
 });
 
@@ -32,7 +32,7 @@ const initialState = {
     isStart: false,
     tableData: [],
     notMineCell: 0,
-    openedOriginCellCount: 0,
+    openedGlobalCellCount: 0,
 };
 
 // 지뢰 심기
@@ -105,7 +105,6 @@ const plantMine = (row, cell, mine) => {
 
 // 지뢰가 아닌 cell 개수 체크
 const checkOpenedCellCount = (notMineCell, openedCellCount) => {
-    // console.log(notMineCell, openedCellCount);
     if (notMineCell !== openedCellCount) return true;
 
     alert('승리 🎉');
@@ -125,13 +124,13 @@ const reducer = (state, action) => {
                 isStart: true,
                 tableData: plantMine(action.row, action.cell, action.mine),
                 notMineCell: action.row * action.cell - action.mine,
-                openedOriginCellCount: 0,
+                openedGlobalCellCount: 0,
             };
         case OPEN_CELL:
             return {
                 ...state,
                 isStart: checkOpenedCellCount(state.notMineCell, action.openedCellCount),
-                openedOriginCellCount: action.openedCellCount,
+                openedGlobalCellCount: action.openedCellCount,
                 tableData: action.newTableData,
             };
         case CHANGE_FLAG:
@@ -152,7 +151,7 @@ const MineSweeper = () => {
             isStart: state.isStart,
             tableData: state.tableData,
             notMineCell: state.notMineCell,
-            openedOriginCellCount: state.openedOriginCellCount,
+            openedGlobalCellCount: state.openedGlobalCellCount,
             dispatch,
         }),
         [state.tableData]

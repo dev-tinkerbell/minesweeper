@@ -23,9 +23,12 @@ const Form = () => {
 
     return (
         <div>
-            <input type='number' placeholder='세로' value={row} onChange={onChangeRow} />
-            <input type='number' placeholder='가로' value={cell} onChange={onChangeCell} />
-            <input type='number' placeholder='지뢰' value={mine} onChange={onChangeMine} />
+            <label htmlFor='row'>가로 </label>
+            <input id='row' type='number' placeholder='세로' value={row} onChange={onChangeRow} />
+            <label htmlFor='cell'>세로 </label>
+            <input id='cell' type='number' placeholder='가로' value={cell} onChange={onChangeCell} />
+            <label htmlFor='mine'>지뢰 </label>
+            <input id='mine' type='number' placeholder='지뢰' value={mine} onChange={onChangeMine} />
             <button onClick={onClickBtn}>시작</button>
         </div>
     );

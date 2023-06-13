@@ -3,15 +3,15 @@ import { useContext, useState, useRef, useEffect } from 'react';
 import { TableContext, OPEN_CELL, CHANGE_FLAG } from './MineSweeper';
 
 const Table = () => {
-    const { tableData, dispatch, openedOriginCellCount } = useContext(TableContext);
+    const { tableData, dispatch, openedGlobalCellCount } = useContext(TableContext);
     const newTableData = [...tableData];
-    const openedCellCount = useRef(openedOriginCellCount);
+    const openedCellCount = useRef(openedGlobalCellCount);
 
     useEffect(() => {
-        if (openedOriginCellCount === 0) {
+        if (openedGlobalCellCount === 0) {
             openedCellCount.current = 0;
         }
-    }, [openedOriginCellCount]);
+    }, [openedGlobalCellCount]);
 
     const openCell = (rowIndex, cellIndex, previousCell) => {
         const cellItem = newTableData[rowIndex] && newTableData[rowIndex][cellIndex];
@@ -84,9 +84,10 @@ const Table = () => {
                                     onClick={() => leftClickHandler(rowIndex, cellIndex, cellItem)}
                                     onContextMenu={(e) => rightClickHandler(e, cellItem)}
                                 >
-                                    {/* {cellItem.info > 0 && cellItem.info} */}
-                                    {cellItem.info === -1 && '💣'}
-                                    {cellItem.isOpened && cellItem.info !== 0 && cellItem.info}
+                                    {cellItem.isOpened && cellItem.info > 0 && cellItem.info}
+                                    {cellItem.isOpened && cellItem.info === -1 && '💣'}
+                                    {/* {cellItem.info === -1 && '💣'} */}
+                                    {/* {cellItem.isOpened && cellItem.info !== 0 && cellItem.info} */}
                                     {cellItem.isFlag && '🚩'}
                                 </td>
                             ))}

@@ -24,3 +24,7 @@ td.mine {
 td.open {
     background-color: #fff;
 }
+
+input {
+    margin-right: 20px;
+}
