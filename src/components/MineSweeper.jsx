@@ -3,17 +3,6 @@ import Table from './Table';
 import Form from './Form';
 
 // code state
-// export const CODE = {
-//     MINE: -7, // 지뢰
-//     NORMAL: -1, // 일반
-//     QUESTION: -2, // 물음표
-//     FLAG: -3, // 깃발
-//     QUESTION_MINE: -4, // 물음표지만 안에 지뢰일 경우
-//     FLAG_MINE: -5, // 깃발이지만 안에 지뢰일 경우
-//     CLICKED_MINE: -6, // 클릭했는데 지뢰일 경우
-//     OPENED: 0, // 열림
-// };
-
 export const CODE = {
     MINE: -1, // 지뢰
     NORMAL: 0, // 일반
